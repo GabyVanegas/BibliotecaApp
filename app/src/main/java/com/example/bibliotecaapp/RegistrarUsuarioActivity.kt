@@ -29,12 +29,15 @@ class RegistrarUsuarioActivity : AppCompatActivity(), View.OnClickListener{
 
         binding.btnSave.setOnClickListener(this)
 
+
+
     }
 
     override fun onClick(p0: View?){
         when(p0!!.id){
             binding.btnSave.id->{
-                if(binding.edtUserName.text.toString().isNotEmpty() && binding.edtPassword.text.toString().isNotEmpty()) doAsync{
+                if(binding.edtUserName.text.toString().isNotEmpty() && binding.edtPassword.text.toString().isNotEmpty())
+                    doAsync{
                         BibliotecaApplicaction.database.UsuarioDao().addUsuario(
                             UsuarioEntity(
                                 username = binding.edtUserName.text.toString(),
@@ -45,8 +48,12 @@ class RegistrarUsuarioActivity : AppCompatActivity(), View.OnClickListener{
                         LoginStartActivity()
                     }
                 }
+                else {
+                    binding.edtUserName.error = "Campo requerido"
+                    binding.edtPassword.error = "Campo requerido"
+                }
                 configProgressDialog()
-                Toast.makeText(this, "!Registro exitoso¡", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "¡Registro exitoso!", Toast.LENGTH_SHORT).show()
             }
         }
     }

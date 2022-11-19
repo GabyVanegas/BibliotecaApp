@@ -14,6 +14,9 @@ class BibliotecaApplicaction : Application()  {
         super.onCreate()
         database = Room.databaseBuilder(this, BibliotecaDatabase::class.java,
             "BibliotecaDB")
+            .allowMainThreadQueries()
+            .fallbackToDestructiveMigration()
             .build()
+
     }
 }

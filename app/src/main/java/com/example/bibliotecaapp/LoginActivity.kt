@@ -8,6 +8,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.bibliotecaapp.databinding.ActivityLoginBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 class LoginActivity : AppCompatActivity() {
 
@@ -32,29 +34,29 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun login(){
-        if(binding.edtUserName.text.toString().isNotEmpty() && binding.edtPassword.text.toString().isNotEmpty()){
-            // Obtener valores del shared preferences
-            val preferences =getSharedPreferences("Users",MODE_PRIVATE)
-            val userName = preferences.getString("username","")
-            val password = preferences.getString("password","")
 
-            if(binding.edtUserName.text.toString() == userName && binding.edtPassword.text.toString() == password){
-                startActivity(Intent(this, MainActivity::class.java))
-                Toast.makeText(this, "Bienvenido $userName", Toast.LENGTH_SHORT).show()
-                finish()
+        doAsync {
+          try {
+              val userName: String = binding.edtUserName.text.toString()
+              val password: String = binding.edtPassword.text.toString()
+              var existe = false;
 
-            } else {
-                MaterialAlertDialogBuilder(this)
-                    .setTitle("Credenciales incorrectas...")
-                    .setMessage("Usuario/Contraseña no son correctos")
-                    .setPositiveButton("Aceptar", null)
-                    .show()
 
-            }
-        }
-        else{
-            binding.edtUserName.error = "Campo requerido"
-            binding.edtPassword.error = "Campo requerido"
+              if (BibliotecaApplicaction.database.UsuarioDao().login(userName, password)) {
+                  existe = true
+              }
+              uiThread {
+               //   Toast.makeText(this@LoginActivity, "Metodo entrando"+existe, Toast.LENGTH_SHORT).show()
+                  if (existe) {
+                      startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                  } else {
+                      Toast.makeText(this@LoginActivity, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show()
+                  }
+              }
+
+          }catch (e:Exception){
+              Toast.makeText(this@LoginActivity, e.message, Toast.LENGTH_SHORT).show()
+          }
         }
     }
 

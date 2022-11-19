@@ -5,4 +5,5 @@ import com.example.bibliotecaapp.Models.UsuarioEntity
 
 class UsuarioRepository(private val dao: UsuarioDao) {
     suspend fun insert(usuario: UsuarioEntity) = dao.addUsuario(usuario)
+
 }
